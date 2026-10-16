@@ -6,221 +6,219 @@
 
 **Project Type:** AI-Powered Web Application
 
-**Purpose:** To transform software ideas into structured development plans with estimated features, technologies, timelines, budgets, and implementation roadmaps.
+**Tagline:** From idea to implementation, smarter and faster.
 
 ### Description
 
-ProjectScope is an AI-powered software project estimation platform that helps students, freelancers, startups, developers, and clients understand how to turn an idea into a working software product.
+ProjectScope is an AI-powered web application that transforms software ideas into structured development plans. Users enter a description of their software idea, and the system generates a project summary, essential features, recommended technologies, estimated development time, approximate budget, and a step-by-step implementation roadmap.
 
-Users describe their software idea in natural language, and the system analyzes the requirements to generate a detailed project plan. This plan includes essential features, recommended technology stacks, estimated development time, approximate development costs, potential risks, and a step-by-step implementation roadmap.
+The application aims to help students, freelancers, startups, and clients understand the resources required to turn their software ideas into practical projects.
 
-The platform aims to make software project planning simpler, faster, and more accessible by providing users with an organized starting point before development begins.
-
-### Tagline
-
-**ProjectScope — From idea to implementation, smarter and faster.**
+The project will be developed as a lightweight MVP within 2–3 days, prioritizing essential functionality, a professional interface, and a working AI integration.
 
 ---
 
-## 2. Problem Statement
+## 2. Project Objectives
 
-People often have software ideas but struggle to determine the resources, technologies, time, and budget required to implement them.
-
-Traditional estimation usually requires technical expertise, consultation, and manual planning. Beginners and non-technical clients may find it difficult to identify the required features, select suitable technologies, or estimate development costs.
-
-ProjectScope addresses this problem by using AI to convert an unstructured software idea into a structured, understandable, and actionable development plan.
-
----
-
-## 3. Project Objectives
-
-The primary objectives of ProjectScope are:
-
-- Allow users to describe software ideas using natural language.
-- Automatically identify and categorize project requirements.
-- Generate essential and optional feature lists.
-- Recommend suitable programming languages, frameworks, databases, and tools.
-- Estimate development duration based on project complexity and scope.
-- Calculate an approximate development budget based on time and selected hourly rates.
-- Generate a step-by-step development roadmap.
-- Identify potential technical challenges and project risks.
-- Provide an easy-to-use interface for reviewing generated estimates.
-- Allow users to save, revisit, and manage their project plans.
+- Allow users to describe their software ideas in natural language.
+- Generate project summaries and essential feature lists using AI.
+- Recommend suitable programming languages, frameworks, and databases.
+- Estimate development hours and duration.
+- Calculate an approximate development budget.
+- Generate an ordered implementation roadmap.
+- Display all results in a clean, organized dashboard.
+- Provide a simple, responsive user interface.
 
 ---
 
-## 4. Target Users
+## 3. Target Users
 
-1. **Students:** Plan semester projects, final-year projects, and academic software assignments.
-2. **Freelancers:** Estimate project scope, deadlines, and client budgets.
-3. **Startups:** Evaluate software ideas before committing resources.
-4. **Clients:** Understand the approximate cost and time required to develop a product.
-5. **Developers:** Create an initial technical plan before implementation.
-6. **Small Businesses:** Evaluate the feasibility of custom software solutions.
+- **Students:** Estimate the scope of university and semester projects.
+- **Freelancers:** Understand the time and budget needed for client projects.
+- **Startups:** Evaluate software ideas before development.
+- **Clients:** Understand the approximate resources required for a software product.
+
+---
+
+## 4. Technology Stack
+
+The project should use a simple technology stack to minimize setup time and development complexity.
+
+| Component | Technology |
+|---|---|
+| Frontend | HTML5 |
+| Styling | CSS3 |
+| Frontend Interactivity | Vanilla JavaScript |
+| Backend | Python with Flask |
+| AI Integration | An accessible LLM API |
+| Estimation Calculations | Python |
+| Data Exchange | JSON |
+| PDF Export | Optional Python PDF library |
+
+### Technology Guidelines
+
+- Use vanilla HTML, CSS, and JavaScript instead of React to reduce setup time.
+- Use Flask to connect the frontend to the AI service.
+- Use an existing AI model through an API; do not train a custom model.
+- Perform numerical time and budget calculations in Python.
+- Do not introduce a database in the initial version.
+- Store API keys in environment variables, never in frontend JavaScript.
 
 ---
 
 ## 5. Functional Requirements
 
-### FR-01: User Input
+### FR-01: Project Idea Input
 
-The system shall allow users to enter a software idea through a text input field.
+The application shall provide a form where users can enter their software idea.
 
-Users should be able to describe:
+The form should include:
 
-- The problem their software solves.
-- The target audience.
-- The main features they want.
-- The intended platform, such as web, mobile, or desktop.
-- Any preferred technologies or constraints.
+- Project idea description.
+- Optional target platform: Web, Mobile, Desktop, or Cross-platform.
+- Optional development team size.
+- Optional hourly development rate.
+- Currency selection.
 
-The system should accept incomplete descriptions and request clarification when essential information is missing.
+The idea description must be required. Other fields should have sensible defaults.
 
-### FR-02: Project Requirement Analysis
+### FR-02: AI Project Analysis
 
-The system shall analyze the submitted idea and generate a structured interpretation containing:
+The system shall send the submitted idea to an AI model through the Flask backend.
+
+The AI shall generate:
 
 - Project summary.
-- Problem statement.
-- Target users.
-- Project category.
-- Core requirements.
-- Functional and non-functional requirements.
-- Assumptions and limitations.
+- Problem the project solves.
+- Target audience.
+- Main project objectives.
+- Important assumptions.
 
 ### FR-03: Feature Breakdown
 
-The system shall generate a categorized list of project features.
+The AI shall generate a list of project features divided into two categories:
 
-Features shall be divided into:
+**MVP Features**
+- Essential features required for the first working version.
 
-- **MVP Features:** Essential features required for the first working version.
-- **Advanced Features:** Features that can be added after the MVP.
-- **Optional Features:** Enhancements that are not essential to the initial release.
+**Future Features**
+- Additional features that can be implemented later.
 
-Each feature should include a short description and an estimated effort.
+Each feature should include a name, short description, and priority.
 
 ### FR-04: Technology Recommendations
 
-The system shall recommend an appropriate technology stack based on the project requirements.
+The system shall recommend a practical technology stack based on the project description.
 
 Recommendations may include:
 
 - Frontend technologies.
 - Backend technologies.
-- Database systems.
-- AI and machine learning libraries.
-- APIs and third-party services.
-- Deployment and hosting platforms.
-- Development and testing tools.
+- Database options.
+- AI libraries or APIs, when relevant.
 
-The system should provide a brief justification for each recommendation.
+Each recommendation should include a short explanation of why it suits the project.
 
-### FR-05: Time Estimation
+The AI should avoid recommending unnecessary technologies.
 
-The system shall estimate the development duration for the project and its major tasks.
+### FR-05: Development Time Estimation
 
-The estimation should consider:
+The system shall estimate the development effort of the project by assigning hours to major development tasks.
 
-- Number and complexity of features.
-- Frontend and backend development.
-- Database design.
-- AI or external API integration.
+Task categories should include:
+
+- Planning and requirements.
+- UI design.
+- Frontend development.
+- Backend development.
+- Integration.
 - Testing and debugging.
-- Deployment and documentation.
-- Developer experience and team size.
+- Deployment.
 
-The result should include an estimated number of development hours and a corresponding duration in weeks.
+The backend shall calculate the total estimated hours from the task estimates.
+
+**Calculation:**
+
+`Total Hours = Sum of Estimated Task Hours`
+
+Estimated calendar duration shall be calculated using the total hours, available working hours per week, and number of developers.
+
+`Duration in Weeks = Total Hours / (Weekly Hours per Developer × Number of Developers)`
+
+The interface should display both total estimated hours and approximate duration in weeks.
+
+These figures must be presented as estimates, not guaranteed deadlines.
 
 ### FR-06: Budget Estimation
 
-The system shall calculate an approximate development budget.
+The system shall calculate an approximate development budget using the estimated hours and hourly rate supplied by the user.
 
-The estimate should consider:
+**Basic calculation:**
 
-- Total estimated development hours.
-- Hourly development rate.
-- Optional design and testing costs.
-- Estimated hosting and third-party service costs.
-- A contingency allowance for unexpected work.
+`Development Cost = Total Estimated Hours × Hourly Rate`
 
-Users should be able to select a currency and adjust the hourly rate.
+The system may apply a default contingency allowance of 15%.
 
-The system must clearly label the budget as an approximation rather than a guaranteed quotation.
+`Estimated Budget = Development Cost × 1.15`
+
+The interface must clearly display the hourly rate, development cost, contingency, and estimated total.
+
+The currency must be visible beside each monetary amount.
+
+Hosting and third-party subscription costs should be excluded unless explicitly estimated and displayed separately.
 
 ### FR-07: Development Roadmap
 
-The system shall generate a sequential implementation roadmap.
+The AI shall generate an ordered implementation roadmap.
 
-The roadmap should include:
+The roadmap should contain:
 
-1. Requirement analysis and planning.
-2. UI/UX design.
-3. Database and architecture design.
+1. Requirements and planning.
+2. UI design.
+3. Architecture and database planning, if needed.
 4. Core feature development.
 5. Frontend and backend integration.
 6. Testing and debugging.
 7. Deployment.
-8. Documentation and maintenance planning.
 
-The roadmap should include task descriptions, estimated durations, dependencies where relevant, and suggested priorities.
+Each step should include a title, description, and priority or sequence number.
 
-### FR-08: Risk Analysis
+The roadmap must be adapted to the submitted idea rather than simply returning the same generic steps for every project.
 
-The system shall identify possible project risks, including:
+### FR-08: Results Dashboard
 
-- Technical complexity.
-- Unclear requirements.
-- Third-party API dependencies.
-- Security and privacy concerns.
-- Budget overruns.
-- Delayed delivery.
-- Performance and scalability limitations.
+After successful generation, the system shall display a project estimation dashboard containing:
 
-Each risk should include a severity level and a suggested mitigation.
+- Project summary.
+- Essential and future features.
+- Recommended technology stack.
+- Estimated development hours.
+- Estimated duration.
+- Approximate budget.
+- Step-by-step roadmap.
 
-### FR-09: Project Results Dashboard
+The dashboard should use readable cards, sections, and lists.
 
-The system shall present the generated project plan in an organized dashboard containing:
+### FR-09: PDF Export (Optional)
 
-- Project overview.
-- Feature breakdown.
-- Technology stack.
-- Time estimation.
-- Budget estimation.
-- Development roadmap.
-- Risk analysis.
-- Project assumptions.
+If time permits, users should be able to download a PDF containing the generated project plan.
 
-The interface should make important estimates easy to find and understand.
+The document should include the project summary, features, technology recommendations, time estimate, budget, and roadmap.
 
-### FR-10: Save and Manage Projects
+This feature must not delay the completion of the core estimator.
 
-The system should allow authenticated users to:
+### FR-10: Error Handling
 
-- Save generated project plans.
-- View previously generated plans.
-- Rename projects.
-- Update project details.
-- Delete saved projects.
-- Generate a revised estimate after changing requirements.
+The application shall handle the following situations:
 
-### FR-11: Export Project Plan
+- Empty project description.
+- Invalid team size or hourly rate.
+- AI API errors.
+- Network failures.
+- Invalid or incomplete AI responses.
+- Unexpected server errors.
 
-The system should allow users to export their project plan as a downloadable PDF.
-
-The exported document should include the project summary, features, technology stack, estimated timeline, budget, roadmap, and risks.
-
-### FR-12: Error Handling
-
-The system shall provide clear messages when:
-
-- The idea description is empty.
-- The submitted idea is too vague to estimate reliably.
-- AI generation fails.
-- The server is unavailable.
-- The user attempts to access an unauthorized project.
-- An estimate cannot be generated from the available information.
+The application should display helpful error messages and allow users to try again.
 
 ---
 
@@ -228,506 +226,400 @@ The system shall provide clear messages when:
 
 ### NFR-01: Usability
 
-The interface must be intuitive, responsive, and suitable for users without advanced technical knowledge.
+The interface should be simple enough for users with limited technical knowledge.
 
 ### NFR-02: Performance
 
-The application should respond promptly to user interactions. AI-generated estimates may take longer, so the interface should display a loading state.
+The application should display a loading indicator while the AI generates the estimate and prevent accidental duplicate submissions.
 
-### NFR-03: Reliability
+### NFR-03: Responsiveness
 
-The system should validate inputs, handle API failures gracefully, and avoid losing saved project data.
+The application should work on modern desktop and mobile browsers.
 
 ### NFR-04: Security
 
-- Protect user accounts and saved project information.
-- Store passwords securely if authentication is implemented locally.
-- Keep AI provider API keys on the backend.
-- Validate and sanitize user inputs.
-- Enforce authorization checks for saved projects.
-- Use HTTPS in production.
+- Keep AI API keys on the server.
+- Load secrets from environment variables.
+- Validate all user inputs on the backend.
+- Avoid displaying internal errors or sensitive configuration details.
+- Do not render untrusted AI output as raw HTML.
 
-### NFR-05: Maintainability
+### NFR-05: Reliability
 
-The codebase should use modular components, clearly separated frontend and backend responsibilities, and reusable estimation logic.
+The application should handle API failures without crashing and validate AI output before displaying the results.
 
-### NFR-06: Scalability
+### NFR-06: Transparency
 
-The architecture should allow additional estimation features, AI providers, currencies, and integrations to be introduced later.
-
-### NFR-07: Transparency
-
-The system must explain that estimates are approximate, identify important assumptions, and avoid presenting AI-generated figures as guaranteed outcomes.
-
-### NFR-08: Compatibility
-
-The application should support modern desktop and mobile browsers.
+The application must clearly state that estimates are approximate and depend on project requirements, developer experience, and implementation complexity.
 
 ---
 
-## 7. Technology Stack
+## 7. User Interface Requirements
 
-The following stack is recommended for an initial implementation.
+### Page 1: Landing Page
 
-| Component | Recommended Technology |
-|---|---|
-| Frontend | React.js |
-| UI Styling | Tailwind CSS |
-| Backend | Python with FastAPI |
-| AI Integration | LLM API through a backend service |
-| AI Output Validation | Pydantic |
-| Database | PostgreSQL |
-| ORM | SQLAlchemy |
-| Authentication | JWT-based authentication or a managed authentication provider |
-| PDF Export | ReportLab or a suitable HTML-to-PDF library |
-| Charts | Recharts |
-| Version Control | Git and GitHub |
-| Deployment | A suitable frontend host and Python-compatible backend host |
+The landing page should contain:
 
-The exact AI provider should be configurable so the application is not permanently dependent on one model provider.
+- ProjectScope logo or wordmark.
+- Tagline: "From idea to implementation, smarter and faster."
+- Short introduction.
+- Project idea input form.
+- Generate Project Plan button.
+- A small section explaining the platform's benefits.
 
-For a smaller academic prototype, the application can initially use a single AI API, SQLite, and a simplified authentication system or no authentication.
+The user should be able to start generating an estimate without creating an account.
+
+### Page 2: Results Dashboard
+
+The results page should contain the following sections:
+
+**A. Project Overview**
+- Project title.
+- Project summary.
+- Target users.
+
+**B. Features**
+- MVP feature cards.
+- Future feature list.
+
+**C. Recommended Technologies**
+- Technology name.
+- Category.
+- Short explanation.
+
+**D. Estimation Summary**
+- Estimated development hours.
+- Estimated duration in weeks.
+- Hourly rate.
+- Estimated budget.
+
+**E. Development Roadmap**
+- Ordered development steps.
+- Task descriptions.
+- Priority indicators.
+
+**F. Actions**
+- Generate another estimate.
+- Download PDF, if implemented.
+
+### UI Design Guidelines
+
+- Use a modern, professional SaaS-style design.
+- Choose a consistent color palette.
+- Use clear headings and readable typography.
+- Use cards to organize the estimation results.
+- Include loading, empty, and error states.
+- Ensure that the layout adapts to mobile screens.
+- Avoid unnecessary animations and complex charts.
 
 ---
 
 ## 8. System Architecture
 
-The system will follow a client-server architecture.
+The application shall follow a simple client-server architecture.
 
 ### Frontend
 
-The frontend handles user interaction, input validation, loading states, project dashboards, and export controls.
+HTML, CSS, and JavaScript handle the input form, user interactions, loading indicators, and results dashboard.
 
-### Backend
+### Flask Backend
 
-The backend receives project descriptions, coordinates estimation, validates AI responses, calculates cost estimates, manages saved projects, and returns structured results.
+The backend validates the submitted information, calls the AI service, validates its response, calculates time and budget, and returns the final result.
 
 ### AI Service
 
-The AI service interprets the project description and generates structured recommendations, feature lists, task breakdowns, and risk assessments.
+The AI model generates the project summary, features, technology recommendations, task estimates, and implementation roadmap.
 
-### Database
+### Processing Flow
 
-The database stores user accounts, project descriptions, generated estimates, selected settings, and project history.
+1. The user enters a project idea.
+2. JavaScript validates the required fields.
+3. The frontend sends a JSON request to the Flask backend.
+4. Flask validates the request.
+5. Flask calls the configured AI API.
+6. The backend parses and validates the AI response.
+7. Python calculates total hours, duration, and budget.
+8. Flask returns structured JSON.
+9. JavaScript renders the results dashboard.
 
-### Architecture Flow
-
-1. The user enters a software idea.
-2. The frontend validates the input.
-3. The backend receives the description and estimation preferences.
-4. The AI service analyzes the requirements.
-5. The backend validates the generated response.
-6. The estimation engine calculates the timeline and budget.
-7. The backend returns the complete project plan.
-8. The frontend displays the results.
-9. The user can adjust, save, or export the plan.
+No database is required for the initial implementation.
 
 ---
 
-## 9. Estimation Methodology
+## 9. API Specification
 
-ProjectScope should combine AI-based analysis with deterministic calculations instead of relying entirely on an LLM to invent numerical estimates.
+### Generate Estimate
 
-### 9.1 Development Time
+**Endpoint:** `POST /api/estimate`
 
-The system should estimate the effort of individual tasks in hours.
+**Request example:**
 
-Example task categories:
+```json
+{
+  "idea": "An AI-powered resume screening and job matching system",
+  "platform": "Web",
+  "team_size": 2,
+  "hourly_rate": 15,
+  "currency": "USD"
+}
+```
 
-- Planning and requirements.
-- UI/UX design.
-- Frontend development.
-- Backend development.
-- Database development.
-- Integrations.
-- Testing.
-- Deployment and documentation.
+**Expected response structure:**
 
-Total effort:
+```json
+{
+  "project_summary": "A web application for screening resumes and matching candidates with job descriptions.",
+  "target_users": ["Recruiters", "Job seekers"],
+  "features": [
+    {
+      "name": "Resume Upload",
+      "description": "Allow users to submit resumes.",
+      "category": "MVP",
+      "priority": "High"
+    }
+  ],
+  "technologies": [
+    {
+      "name": "Python",
+      "category": "Backend",
+      "reason": "Supports AI and text processing."
+    }
+  ],
+  "tasks": [
+    {
+      "name": "Planning",
+      "hours": 8
+    },
+    {
+      "name": "Backend Development",
+      "hours": 24
+    }
+  ],
+  "roadmap": [
+    {
+      "step": 1,
+      "title": "Requirements and Planning",
+      "description": "Define the initial feature scope."
+    }
+  ],
+  "total_hours": 32,
+  "duration_weeks": 2,
+  "hourly_rate": 15,
+  "development_cost": 480,
+  "contingency": 72,
+  "estimated_budget": 552,
+  "confidence": "Medium",
+  "assumptions": [
+    "The first version targets a web browser."
+  ]
+}
+```
 
-`Total Hours = Sum of Estimated Task Hours`
+The values above are illustrative. The backend must calculate the numerical fields from validated task estimates and user inputs instead of blindly trusting numbers returned by the AI.
 
-Calendar duration:
+The example duration is illustrative and should be calculated using the selected team size and working hours.
 
-`Duration in Weeks = Total Hours / (Hours per Week × Number of Developers)`
+### Health Check
 
-This calculation assumes tasks can be distributed effectively. Tasks with dependencies or parallel work limitations may increase the actual duration.
+**Endpoint:** `GET /api/health`
 
-### 9.2 Budget
+Purpose: Verify that the Flask backend is running.
 
-The basic development cost is:
+**Example response:**
 
-`Development Cost = Total Hours × Hourly Rate`
-
-The overall budget may include:
-
-`Total Budget = Development Cost + Infrastructure Costs + Contingency`
-
-The contingency should be configurable, for example 10–20%, and applied transparently.
-
-### 9.3 Estimation Confidence
-
-Each estimate should include a confidence label:
-
-- **Low Confidence:** Requirements are incomplete or highly uncertain.
-- **Medium Confidence:** The core requirements are reasonably clear.
-- **High Confidence:** Requirements are detailed and assumptions are limited.
-
-Confidence should reflect the quality of the available information, not imply that the estimate is guaranteed to be accurate.
-
-### 9.4 Example
-
-For a hypothetical project with 120 estimated development hours, an hourly rate of $15, and a 15% contingency:
-
-- Development cost: $1,800.
-- Contingency: $270.
-- Estimated total: $2,070, excluding any separately listed infrastructure costs.
-
-All figures are illustrative.
-
----
-
-## 10. AI Processing Requirements
-
-The AI component should generate a structured response rather than unformatted text.
-
-The expected response should contain:
-
-- `project_summary`
-- `project_category`
-- `target_users`
-- `assumptions`
-- `requirements`
-- `features`
-- `technology_stack`
-- `task_estimates`
-- `timeline`
-- `budget_inputs`
-- `roadmap`
-- `risks`
-- `confidence`
-
-The backend must validate the response against a defined schema before displaying or saving it.
-
-The AI should:
-
-- Prefer practical and widely supported technologies.
-- Explain why the recommended stack suits the project.
-- Avoid unnecessary features and technologies.
-- Identify missing requirements.
-- Provide ranges where estimates are uncertain.
-- Clearly distinguish AI recommendations from calculated figures.
-- Never claim that estimates guarantee the actual development outcome.
+```json
+{
+  "status": "ok"
+}
+```
 
 ---
 
-## 11. Database Design
+## 10. AI Output and Validation
 
-A relational database may contain the following tables.
+The AI must return structured JSON containing the required project sections.
 
-### Users
+The backend should validate:
 
-- `id`
-- `name`
-- `email`
-- `password_hash` or external authentication identifier
-- `created_at`
+- Required fields are present.
+- Feature and roadmap sections contain valid lists.
+- Estimated task hours are non-negative numbers.
+- The total development hours equal the sum of validated task estimates.
+- Team size and hourly rate are valid.
+- Budget calculations use the selected currency and contingency.
+- The response contains no unexpected data that could break the frontend.
 
-### Projects
+If the AI returns invalid JSON or missing information, the backend should retry parsing or return a clear error.
 
-- `id`
-- `user_id`
-- `title`
-- `idea_description`
-- `project_category`
-- `created_at`
-- `updated_at`
-
-### Estimates
-
-- `id`
-- `project_id`
-- `version`
-- `estimated_hours`
-- `estimated_duration_weeks`
-- `hourly_rate`
-- `currency`
-- `estimated_budget_min`
-- `estimated_budget_max`
-- `confidence_level`
-- `assumptions`
-- `generated_at`
-
-### Features
-
-- `id`
-- `estimate_id`
-- `name`
-- `description`
-- `priority`
-- `feature_category`
-- `estimated_hours`
-
-### Roadmap Tasks
-
-- `id`
-- `estimate_id`
-- `title`
-- `description`
-- `estimated_hours`
-- `sequence_number`
-- `priority`
-- `dependencies`
-
-### Risks
-
-- `id`
-- `estimate_id`
-- `description`
-- `severity`
-- `mitigation`
-
-For an MVP, features, roadmap tasks, risks, and technology recommendations may be stored as validated JSON fields within an estimate record. They can be normalized into separate tables as the application grows.
+The AI should use reasonable assumptions when the idea lacks detail, while making those assumptions visible in the final report.
 
 ---
 
-## 12. User Interface Requirements
+## 11. Project Structure
 
-### Page 1: Landing Page
+The recommended folder structure is:
 
-Should contain:
+```text
+ProjectScope/
+├── app.py
+├── requirements.txt
+├── .env
+├── .gitignore
+├── services/
+│   ├── __init__.py
+│   └── ai_service.py
+├── templates/
+│   └── index.html
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── script.js
+└── README.md
+```
 
-- ProjectScope branding and tagline.
-- A short explanation of the platform.
-- A prominent “Estimate My Project” button.
-- Key benefits.
-- A sample generated estimate.
+### File Responsibilities
 
-### Page 2: Project Input
+- `app.py`: Flask application, API routes, validation, and calculations.
+- `services/ai_service.py`: AI API integration and prompt handling.
+- `templates/index.html`: Landing page and results layout.
+- `static/css/style.css`: Page styling and responsive design.
+- `static/js/script.js`: Form submission, API requests, loading states, and result rendering.
+- `requirements.txt`: Python dependencies.
+- `.env`: Local API credentials and configuration.
+- `.gitignore`: Prevent secrets and virtual environments from being committed.
+- `README.md`: Setup and execution instructions.
 
-Should contain:
-
-- Project idea text area.
-- Optional project title.
-- Target platform selection.
-- Project complexity or scope preferences.
-- Team size.
-- Developer hourly rate.
-- Currency selection.
-- Generate Estimate button.
-
-Advanced preferences should be optional to keep the experience simple.
-
-### Page 3: Estimation Dashboard
-
-Should contain:
-
-- Project summary.
-- Estimated hours and duration.
-- Approximate budget range.
-- Feature list.
-- Recommended technologies.
-- Roadmap timeline.
-- Risk assessment.
-- Confidence level.
-- Save, revise, and export actions.
-
-### Page 4: Project History
-
-Should display saved projects with their names, creation dates, latest estimate summaries, and actions to open, edit, or delete them.
-
-### UI Design Principles
-
-- Clean, modern, professional appearance.
-- Responsive layouts.
-- Clear visual hierarchy.
-- Readable cards and tables.
-- Accessible color contrast.
-- Visible loading, success, and error states.
-- Avoid overwhelming users with technical jargon.
+The optional PDF export can be implemented in an additional service module if needed.
 
 ---
 
-## 13. API Design
+## 12. Development Plan
 
-The backend may expose the following REST API endpoints.
+### Day 1: Interface and Backend
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/estimates` | Generate a new project estimate |
-| GET | `/api/projects` | Retrieve the current user's projects |
-| GET | `/api/projects/{id}` | Retrieve a saved project |
-| PUT | `/api/projects/{id}` | Update a project |
-| DELETE | `/api/projects/{id}` | Delete a project |
-| POST | `/api/projects/{id}/estimates` | Generate a revised estimate |
-| GET | `/api/estimates/{id}/export` | Export an estimate as PDF |
+- Create the project directory and Python virtual environment.
+- Install Flask and the required dependencies.
+- Build the landing page and input form.
+- Add basic styling and responsive layout.
+- Create the Flask application and health-check endpoint.
+- Implement the `/api/estimate` route with input validation.
 
-Authentication endpoints should be included if authentication is implemented directly by the application.
+**Day 1 deliverable:** A working interface connected to a Flask backend.
 
-Every project-specific endpoint must verify that the authenticated user is authorized to access the requested resource.
+### Day 2: AI Integration and Estimation
+
+- Configure the AI API key.
+- Implement the AI prompt and structured output.
+- Generate project summaries, features, technologies, and roadmaps.
+- Validate AI-generated task estimates.
+- Calculate development hours, duration, and budget using Python.
+- Render the results dashboard.
+- Handle API and parsing errors.
+
+**Day 2 deliverable:** A working end-to-end AI project estimator.
+
+### Day 3: Testing and Finalization
+
+- Improve styling and mobile responsiveness.
+- Test different project ideas.
+- Verify numerical calculations.
+- Fix frontend and backend bugs.
+- Add assumptions and confidence indicators.
+- Implement PDF export if time permits.
+- Write the README and prepare a demonstration.
+
+**Day 3 deliverable:** A tested and presentable MVP.
 
 ---
 
-## 14. MVP Scope
+## 13. Testing Requirements
 
-The Minimum Viable Product should focus on the core estimation workflow.
+The application should be tested using several different project ideas.
 
-### Must-Have Features
+### Functional Tests
 
-1. Enter a software idea.
-2. Generate an AI-powered project summary.
-3. Generate an MVP feature breakdown.
-4. Recommend a technology stack.
-5. Estimate development hours and duration.
-6. Calculate an approximate budget.
-7. Generate an implementation roadmap.
-8. Display estimation assumptions and confidence.
-9. Export the plan as PDF.
+- Submit a valid project description.
+- Verify that all result sections appear.
+- Test different platforms and team sizes.
+- Generate estimates for simple and complex ideas.
+- Generate another estimate after changing the input.
 
-### Should-Have Features
+### Validation Tests
 
-- User authentication.
-- Save and retrieve project history.
-- Revise estimates after changing requirements.
-- Adjustable hourly rates and currencies.
-- Risk analysis.
+- Submit an empty idea.
+- Submit an invalid team size.
+- Submit a negative hourly rate.
+- Test missing or malformed AI fields.
 
-### Future Enhancements
+### Calculation Tests
 
+- Verify that total hours equal the sum of task hours.
+- Verify that duration uses the selected team size and weekly working hours.
+- Verify that development cost equals total hours multiplied by hourly rate.
+- Verify that contingency is calculated correctly.
+
+### Error Tests
+
+- Simulate an AI API failure.
+- Test a malformed AI response.
+- Verify that loading indicators stop after failures.
+- Confirm that the interface remains usable after an error.
+
+---
+
+## 14. Explicitly Out of Scope
+
+To complete the project within 2–3 days, the following features will not be included in the initial version:
+
+- User registration and login.
+- PostgreSQL, MySQL, or other database integration.
+- Saving and managing project history.
 - Team collaboration.
-- Multiple estimation models.
-- Comparison of alternative technology stacks.
-- Editable task estimates.
-- Project progress tracking.
-- Integration with project management tools.
-- Historical estimation accuracy analysis.
-- Localized labor rates and regional cost profiles.
+- Payment integration.
+- Multiple AI providers.
+- Custom AI model training.
+- Advanced analytics and charts.
+- External project management integrations.
+- Detailed risk prediction.
+- Automatic deployment of generated projects.
+
+These features can be considered for future versions.
 
 ---
 
-## 15. Constraints and Assumptions
+## 15. Success Criteria
 
-- AI-generated estimates depend on the quality and completeness of the input.
-- Actual development time varies according to developer experience, team coordination, and technical complexity.
-- Development rates differ by region and service provider.
-- Third-party APIs, subscriptions, and hosting may introduce recurring costs.
-- The application will not guarantee the actual completion date or final development cost.
-- AI API usage may incur charges and may be subject to provider limits.
-- Initial development should prioritize a functional MVP rather than every future enhancement.
+The MVP is complete when:
 
----
+1. A user can enter a software idea through the interface.
+2. The application generates a project summary using AI.
+3. The application displays MVP features and technology recommendations.
+4. The application produces a development roadmap.
+5. The backend calculates estimated hours, duration, and budget.
+6. The results are displayed in a clean dashboard.
+7. Invalid inputs and API errors are handled properly.
+8. The application works in a modern desktop browser and adapts to mobile screens.
+9. The application can be run locally using documented setup instructions.
 
-## 16. Testing Requirements
-
-The application should be tested at multiple levels.
-
-### Unit Testing
-
-- Time estimation calculations.
-- Budget calculations.
-- Input validation.
-- AI response schema validation.
-- Currency and contingency calculations.
-
-### Integration Testing
-
-- Frontend-to-backend communication.
-- AI provider integration.
-- Database operations.
-- PDF generation.
-
-### Functional Testing
-
-- Generate an estimate from a valid idea.
-- Handle empty or vague project descriptions.
-- Display all required sections.
-- Save and retrieve projects.
-- Revise an estimate.
-- Export a PDF.
-- Handle API failures.
-
-### Security Testing
-
-- Prevent unauthorized project access.
-- Validate user input.
-- Protect API keys.
-- Verify authentication and authorization.
-- Test handling of malicious or malformed requests.
+PDF export is a bonus feature and is not required for the core MVP.
 
 ---
 
-## 17. Success Criteria
+## 16. Final Deliverable
 
-The project will be considered successful when:
+ProjectScope will be a lightweight, AI-powered web application that converts software ideas into structured development estimates.
 
-1. Users can submit a software idea and receive a structured project plan.
-2. The generated plan includes features, technologies, time, budget, and roadmap.
-3. Budget calculations are reproducible from the displayed inputs.
-4. The system communicates uncertainty and assumptions clearly.
-5. Users can export a readable PDF of the generated plan.
-6. The interface works on desktop and mobile devices.
-7. Errors are handled without crashing the application.
-8. Saved project data is protected when authentication is enabled.
-
----
-
-## 18. Development Phases
-
-### Phase 1: Foundation
-
-- Set up the frontend and backend.
-- Create the project input page.
-- Implement basic input validation.
-
-### Phase 2: AI Estimation
-
-- Integrate an AI provider.
-- Design structured prompts and output schemas.
-- Generate summaries, features, technologies, roadmaps, and risks.
-
-### Phase 3: Estimation Engine
-
-- Implement task-hour aggregation.
-- Implement duration calculations.
-- Implement budget ranges and contingency.
-- Add confidence and assumption handling.
-
-### Phase 4: Results Dashboard
-
-- Build the estimation results interface.
-- Display features, technologies, budget, timeline, and roadmap.
-- Add loading and error states.
-
-### Phase 5: Persistence and Export
-
-- Add project saving and history.
-- Implement PDF export.
-- Add authentication if required.
-
-### Phase 6: Testing and Deployment
-
-- Test the complete workflow.
-- Fix bugs and validate calculations.
-- Configure environment variables and deployment.
-- Prepare documentation.
-
----
-
-## 19. Final Deliverable
-
-The final deliverable will be a responsive AI-powered web application that accepts a software idea and produces an organized project estimation report.
-
-The report will include:
+The final MVP will provide:
 
 - Project overview and requirements.
-- MVP and advanced features.
+- Essential and future features.
 - Recommended technology stack.
-- Estimated development effort and duration.
+- Estimated development hours and duration.
 - Approximate budget.
-- Step-by-step implementation roadmap.
-- Risk analysis.
-- Assumptions and confidence level.
+- Step-by-step development roadmap.
+- Assumptions and confidence indicators.
 
-The application will provide a practical foundation for evaluating software ideas before development begins.
+The project prioritizes a functional AI integration, transparent calculations, a professional interface, and a realistic development scope.
 
 **ProjectScope — From idea to implementation, smarter and faster.**
