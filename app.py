@@ -3,11 +3,11 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 
 load_dotenv()
 
-from services import ai_service, estimator  # noqa: E402
+from services import ai_service, estimator, pdf_report  # noqa: E402
 from services.demo_data import get_demo_plan  # noqa: E402
 from services.plan_schema import AIResponseError, parse_plan  # noqa: E402
 from services.validation import (  # noqa: E402
@@ -45,7 +45,11 @@ def index():
 
 @app.get("/api/health")
 def health():
-    return jsonify({"status": "ok", "ai_configured": ai_service.is_configured()})
+    return jsonify({
+        "status": "ok",
+        "ai_configured": ai_service.is_configured(),
+        "pdf_available": pdf_report.is_available(),
+    })
 
 
 @app.post("/api/estimate")
@@ -84,6 +88,41 @@ def estimate():
         return jsonify(build_response(plan, params, "live"))
     except ValueError:
         return error("Could not calculate the estimate for these inputs.", 400)
+
+
+@app.post("/api/report.pdf")
+def report_pdf():
+    """Build a PDF of a plan already shown in the dashboard.
+
+    The plan is re-validated and every total is recalculated here, so the PDF
+    never trusts numbers sent by the browser.
+    """
+    if not pdf_report.is_available():
+        return error("PDF export is not available: install reportlab (pip install reportlab).", 501, code="pdf_unavailable")
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return error("Request body must be a JSON object.", 400)
+    try:
+        params = validate_estimate_request(data.get("request"))
+    except RequestValidationError as exc:
+        return error("The report inputs are invalid.", 400, fields=exc.errors)
+    try:
+        plan = parse_plan(data.get("plan"))
+    except AIResponseError:
+        return error("The report data is incomplete. Please generate the plan again.", 400)
+    mode = "demo" if data.get("mode") == "demo" else "live"
+    try:
+        result = build_response(plan, params, mode)
+        pdf = pdf_report.build_pdf(result["plan"], result["estimates"], mode)
+    except ValueError:
+        return error("Could not calculate the estimate for these inputs.", 400)
+    except Exception:
+        logger.exception("PDF generation failed")
+        return error("Could not create the PDF. Please try again.", 500, retryable=True)
+    return Response(pdf, mimetype="application/pdf", headers={
+        "Content-Disposition": 'attachment; filename="projectscope-report.pdf"',
+        "Cache-Control": "no-store",
+    })
 
 
 @app.errorhandler(404)

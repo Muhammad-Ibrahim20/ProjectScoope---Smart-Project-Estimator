@@ -118,12 +118,55 @@
       }
       landing.classList.add("hidden");
       results.classList.remove("hidden");
-      window.PSRender.renderResults(results, body, showLanding);
+      const reqData = Object.assign({}, data);
+      delete reqData.demo;
+      window.PSRender.renderResults(results, body, showLanding, function (btn, status) {
+        downloadPdf(btn, status, { request: reqData, plan: body.plan, mode: body.mode });
+      });
       window.scrollTo(0, 0);
     } catch (e) {
       showError("Network error: could not reach the server. Check your connection and try again.", true);
     } finally {
       setLoading(false, demo);
+    }
+  }
+
+  // Ask the server to build a PDF of the shown plan (totals are recalculated server-side).
+  let pdfBusy = false;
+  async function downloadPdf(btn, status, payload) {
+    if (pdfBusy) return;
+    pdfBusy = true;
+    btn.disabled = true;
+    btn.textContent = "Preparing PDF…";
+    status.textContent = "";
+    try {
+      const res = await fetch("/api/report.pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        let msg = "Could not create the PDF (" + res.status + ").";
+        try { const b = await res.json(); if (b && b.error) msg = b.error; } catch (e) { /* ignore */ }
+        status.textContent = msg + " You can still use Print report.";
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "projectscope-report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      status.textContent = "PDF downloaded.";
+    } catch (e) {
+      status.textContent = "Network error while creating the PDF. Please try again.";
+    } finally {
+      pdfBusy = false;
+      btn.disabled = false;
+      btn.textContent = "Download PDF";
     }
   }
 

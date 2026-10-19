@@ -25,8 +25,14 @@ You can also run `npm install` and then `npm run dev`. These npm scripts only wr
 With no key set, the app shows a setup message and a **clearly labelled demo**. The demo is a fixed sample plan, and your form values are still used for the calculations.
 If a live request fails, you get an error message and a Retry button. The app never swaps in demo data without telling you.
 
+## PDF export (optional)
+On the results dashboard, click **Download PDF** to save the report. The PDF is built with ReportLab, which is listed in `requirements.txt`.
+The browser sends back the plan and form inputs, and the server checks the plan again and **recalculates every total** before building the PDF, so numbers can't be changed on the client side.
+If ReportLab isn't installed, the endpoint returns a clear message (HTTP 501) and **Print report** still works.
+
 ## API
-- `GET /api/health` returns `{status, ai_configured}`.
+- `GET /api/health` returns `{status, ai_configured, pdf_available}`.
+- `POST /api/report.pdf` takes `{request: {...same fields as /api/estimate}, plan, mode}` and returns `application/pdf`.
 - `POST /api/estimate` takes `{idea, title?, platform, team_size, weekly_hours, hourly_rate, currency, contingency_percent}` and returns `{ok, mode, plan, estimates}`.
   Status codes: 400 for invalid input, 502 when the AI fails or returns an invalid response (retryable), 503 when AI is not configured.
 
@@ -51,6 +57,7 @@ services/plan_schema.py   AI JSON parsing and schema validation
 services/estimator.py     hours, duration and budget math
 services/validation.py    request validation
 services/demo_data.py     fixed demo plan
+services/pdf_report.py    optional ReportLab PDF report
 templates/index.html      page
 static/css, static/js     styles (including print) and safe DOM rendering
 tests/test_app.py         pytest suite

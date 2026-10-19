@@ -146,17 +146,27 @@
     return c;
   }
 
-  function actionsCard(onNew) {
+  function actionsCard(onNew, onPdf) {
     const c = card("Actions", "span-2 no-print");
     const again = el("button", { cls: "btn btn-primary", text: "Generate another estimate" });
     again.type = "button"; again.addEventListener("click", onNew);
     const print = el("button", { cls: "btn btn-secondary", text: "Print report" });
     print.type = "button"; print.addEventListener("click", function () { window.print(); });
-    c.appendChild(el("div", { cls: "actions" }, [again, print]));
+    const row = el("div", { cls: "actions" }, [again, print]);
+    const status = el("p", { cls: "hint", text: "" });
+    status.setAttribute("aria-live", "polite");
+    if (onPdf) {
+      const pdf = el("button", { cls: "btn btn-secondary", text: "Download PDF" });
+      pdf.type = "button";
+      pdf.addEventListener("click", function () { onPdf(pdf, status); });
+      row.appendChild(pdf);
+    }
+    c.appendChild(row);
+    c.appendChild(status);
     return c;
   }
 
-  function renderResults(container, data, onNew) {
+  function renderResults(container, data, onNew, onPdf) {
     const plan = data.plan, est = data.estimates;
     container.replaceChildren();
     if (data.mode === "demo") {
@@ -169,7 +179,7 @@
     container.appendChild(el("div", { cls: "results-head" }, [titleBlock, badge("neutral", "Approximate estimate")]));
     container.appendChild(el("div", { cls: "dash" }, [
       overviewCard(plan), estimateCard(plan, est), featuresCard(plan), stackCard(plan),
-      roadmapCard(plan), risksCard(plan), actionsCard(onNew),
+      roadmapCard(plan), risksCard(plan), actionsCard(onNew, onPdf),
     ]));
   }
 

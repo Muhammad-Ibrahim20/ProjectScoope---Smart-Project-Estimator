@@ -221,3 +221,48 @@ def test_full_workflow(client, mock_ai):
     assert est["duration_weeks_exact"] == 2.67 and est["duration_weeks"] == 3
     assert est["base_cost"] == 800 and est["contingency_amount"] == 80 and est["total_budget"] == 880
     assert est["currency"] == "USD" and est["approximate"] is True
+
+
+# --- PDF export (Phase 2) ---------------------------------------------------------------
+
+def _pdf_payload(**overrides):
+    payload = {"request": dict(VALID), "plan": parse_plan(get_demo_plan()), "mode": "live"}
+    payload.update(overrides)
+    return payload
+
+
+def test_pdf_download(client):
+    pytest.importorskip("reportlab")
+    res = client.post("/api/report.pdf", json=_pdf_payload())
+    assert res.status_code == 200
+    assert res.mimetype == "application/pdf"
+    assert res.data.startswith(b"%PDF")
+    assert "attachment" in res.headers["Content-Disposition"]
+
+
+def test_pdf_handles_markup_in_ai_text(client):
+    pytest.importorskip("reportlab")
+    plan = parse_plan(get_demo_plan())
+    plan["project_summary"] = "<b>bold & <unclosed tag"
+    res = client.post("/api/report.pdf", json=_pdf_payload(plan=plan))
+    assert res.status_code == 200 and res.data.startswith(b"%PDF")
+
+
+def test_pdf_rejects_invalid_plan(client):
+    pytest.importorskip("reportlab")
+    plan = parse_plan(get_demo_plan())
+    del plan["task_estimates"]
+    assert client.post("/api/report.pdf", json=_pdf_payload(plan=plan)).status_code == 400
+
+
+def test_pdf_rejects_invalid_request(client):
+    pytest.importorskip("reportlab")
+    bad = dict(VALID, team_size=0)
+    assert client.post("/api/report.pdf", json=_pdf_payload(request=bad)).status_code == 400
+
+
+def test_pdf_unavailable_message(client, monkeypatch):
+    monkeypatch.setattr(app_module.pdf_report, "is_available", lambda: False)
+    res = client.post("/api/report.pdf", json=_pdf_payload())
+    assert res.status_code == 501
+    assert res.get_json()["code"] == "pdf_unavailable"
