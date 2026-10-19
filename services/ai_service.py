@@ -4,6 +4,7 @@ To swap providers, change only `_call_model` (and the config helpers).
 """
 import os
 
+from services import token_usage
 from services.plan_schema import AIResponseError, parse_plan
 
 DEFAULT_MODEL = "gemini-2.5-flash"
@@ -64,7 +65,7 @@ def build_user_prompt(params):
 
 
 def _call_model(prompt):
-    """Call Gemini and return the raw text response."""
+    """Call Gemini and return (raw_text, usage_dict_or_None)."""
     api_key = get_api_key()
     if not api_key:
         raise AIConfigError("AI_API_KEY is not set")
@@ -87,17 +88,23 @@ def _call_model(prompt):
                 system_instruction=SYSTEM_PROMPT,
                 response_mime_type="application/json",
                 temperature=0.4,
+                max_output_tokens=token_usage.max_output_tokens(SYSTEM_PROMPT + prompt),
             ),
         )
         text = response.text
+        usage = token_usage.from_gemini(response)
     except Exception as exc:  # provider errors vary; never leak details upward
         raise AIServiceError("AI provider request failed") from exc
     if not text:
         raise AIResponseError("AI returned an empty response")
-    return text
+    return text, usage
 
 
 def generate_plan(params):
-    """Return a validated plan dict. Raises AIConfigError, AIServiceError or AIResponseError."""
-    raw = _call_model(build_user_prompt(params))
-    return parse_plan(raw)
+    """Return (validated plan dict, token usage or None).
+
+    Raises AIConfigError, AIServiceError or AIResponseError.
+    """
+    result = _call_model(build_user_prompt(params))
+    raw, usage = result if isinstance(result, tuple) else (result, None)
+    return parse_plan(raw), usage
