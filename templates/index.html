@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProjectScope — Smart Project Estimator</title>
+  <meta name="description" content="From idea to implementation, smarter and faster.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-ai-configured="{{ 'true' if ai_configured else 'false' }}">
+  <header class="topbar no-print">
+    <div class="container topbar-inner">
+      <a href="/" class="brand"><span class="logo">PS</span> ProjectScope</a>
+      <span class="badge {{ 'badge-ok' if ai_configured else 'badge-warn' }}">
+        {{ 'Live AI ready' if ai_configured else 'Demo mode (no API key)' }}
+      </span>
+    </div>
+  </header>
+
+  <main>
+    <section id="landing" class="container">
+      <div class="hero">
+        <div class="hero-text">
+          <h1>ProjectScope</h1>
+          <p class="tagline">From idea to implementation, smarter and faster.</p>
+          <p class="lead">Describe your software idea in plain language. ProjectScope uses AI to work out features, tech stack, tasks, roadmap and risks. It then calculates hours, duration and budget in Python, so the totals are consistent and you can check them.</p>
+          <ul class="highlights">
+            <li><strong>Tailored plans</strong> with MVP and future features</li>
+            <li><strong>Python-calculated</strong> hours, weeks and budget</li>
+            <li><strong>Roadmap and risks</strong>, with mitigations</li>
+            <li><strong>Printable report</strong> to share with clients</li>
+          </ul>
+          <div class="sample card">
+            <h3>Sample estimate</h3>
+            <p class="muted">Campus book exchange · Web · 2 devs × 20 h/week · PKR 1,500/h · 15% contingency</p>
+            <div class="sample-grid">
+              <div><span class="k">160 h</span><span class="l">Total hours</span></div>
+              <div><span class="k">4 wks</span><span class="l">Duration</span></div>
+              <div><span class="k">PKR 276,000</span><span class="l">Approx. budget</span></div>
+            </div>
+          </div>
+        </div>
+
+        <form id="estimate-form" class="card form-card" novalidate>
+          <h2>Generate a project plan</h2>
+          {% if not ai_configured %}
+          <div class="notice notice-warn" id="setup-notice">
+            <strong>Live AI is not set up.</strong> To get real AI plans, add <code>AI_API_KEY</code> (a Google Gemini key) in the Secrets panel or a local <code>.env</code> file, then restart. Until then you can try a <strong>labelled demo</strong> that uses a fixed sample plan.
+          </div>
+          {% endif %}
+          <label for="title">Project title <span class="opt">(optional)</span></label>
+          <input id="title" name="title" type="text" maxlength="120" placeholder="e.g. HireMatch">
+
+          <label for="idea">Software idea <span class="req">*</span></label>
+          <textarea id="idea" name="idea" rows="6" maxlength="{{ idea_max }}" required
+            placeholder="e.g. An AI-powered resume screening and job matching system for small companies..."></textarea>
+          <div class="hint"><span id="idea-count">0</span> / {{ idea_max }} characters (minimum 20)</div>
+          <div class="field-error" data-for="idea"></div>
+
+          <div class="grid-2">
+            <div>
+              <label for="platform">Platform</label>
+              <select id="platform" name="platform">
+                {% for p in platforms %}<option value="{{ p }}" {{ 'selected' if p == defaults.platform }}>{{ p }}</option>{% endfor %}
+              </select>
+            </div>
+            <div>
+              <label for="team_size">Team size</label>
+              <input id="team_size" name="team_size" type="number" min="1" max="20" step="1" value="{{ defaults.team_size }}">
+              <div class="field-error" data-for="team_size"></div>
+            </div>
+            <div>
+              <label for="weekly_hours">Hours / week per dev</label>
+              <input id="weekly_hours" name="weekly_hours" type="number" min="1" max="80" step="0.5" value="{{ defaults.weekly_hours }}">
+              <div class="field-error" data-for="weekly_hours"></div>
+            </div>
+            <div>
+              <label for="hourly_rate">Hourly rate</label>
+              <input id="hourly_rate" name="hourly_rate" type="number" min="0" step="any" value="{{ defaults.hourly_rate }}">
+              <div class="field-error" data-for="hourly_rate"></div>
+            </div>
+            <div>
+              <label for="currency">Currency</label>
+              <select id="currency" name="currency">
+                {% for c in currencies %}<option value="{{ c }}" {{ 'selected' if c == defaults.currency }}>{{ c }}</option>{% endfor %}
+              </select>
+            </div>
+            <div>
+              <label for="contingency_percent">Contingency %</label>
+              <input id="contingency_percent" name="contingency_percent" type="number" min="0" max="50" step="1" value="{{ defaults.contingency_percent }}">
+              <div class="field-error" data-for="contingency_percent"></div>
+            </div>
+          </div>
+
+          <div id="form-error" class="notice notice-error hidden" role="alert">
+            <span id="form-error-text"></span>
+            <button type="button" id="retry-btn" class="btn btn-small hidden">Retry</button>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary btn-block">
+            <span class="spinner hidden" aria-hidden="true"></span>
+            <span class="btn-label">Generate Project Plan</span>
+          </button>
+          {% if not ai_configured %}
+          <button type="button" id="demo-btn" class="btn btn-secondary btn-block">Try demo (sample plan, not AI)</button>
+          {% endif %}
+          <p class="hint center" id="loading-text" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="results" class="container hidden" aria-live="polite"></section>
+  </main>
+
+  <footer class="footer no-print">
+    <div class="container">ProjectScope · All estimates are approximate and for planning only.</div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/render.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

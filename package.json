@@ -1,0 +1,11 @@
+{
+  "name": "projectscope",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ProjectScope — Smart Project Estimator (Flask app; npm scripts are only a convenience wrapper)",
+  "scripts": {
+    "postinstall": "python3 -m pip install -q -r requirements.txt || python -m pip install -q -r requirements.txt || echo 'Could not install Python deps automatically; run: pip install -r requirements.txt'",
+    "dev": "python3 app.py || python app.py",
+    "test": "python3 -m pytest -q || python -m pytest -q"
+  }
+}
