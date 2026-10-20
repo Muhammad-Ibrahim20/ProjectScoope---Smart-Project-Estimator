@@ -112,8 +112,12 @@
       try { body = await res.json(); } catch (e) { body = null; }
       if (!res.ok || !body || !body.ok) {
         if (body && body.fields) Object.keys(body.fields).forEach(function (f) { setFieldError(f, body.fields[f]); });
-        const msg = (body && body.error) || "The server returned an unexpected response (" + res.status + ").";
-        showError(msg, !!(body && body.retryable) || res.status >= 500 || !body);
+        let msg = (body && body.error) || "The server returned an unexpected response (" + res.status + ").";
+        if (res.status === 503 && demoBtn) msg += " You can use the labelled demo button below.";
+        // 400 = fix input, 503 = configure AI (not retryable); 502/5xx = retryable.
+        const retryable = res.status !== 503 && res.status !== 400 &&
+          (!!(body && body.retryable) || res.status >= 500 || !body);
+        showError(msg, retryable);
         return;
       }
       landing.classList.add("hidden");

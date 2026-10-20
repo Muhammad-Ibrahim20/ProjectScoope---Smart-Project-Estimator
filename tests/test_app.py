@@ -266,3 +266,43 @@ def test_pdf_unavailable_message(client, monkeypatch):
     res = client.post("/api/report.pdf", json=_pdf_payload())
     assert res.status_code == 501
     assert res.get_json()["code"] == "pdf_unavailable"
+
+
+# --- Estimate flow error handling (Phase 1) ---------------------------------------------
+
+def test_unexpected_ai_exception_is_retryable_502(client, monkeypatch):
+    monkeypatch.setenv("AI_API_KEY", "k")
+
+    def boom(prompt):
+        raise RuntimeError("weird provider bug")
+    monkeypatch.setattr(ai_service, "_call_model", boom)
+    res = post(client)
+    assert res.status_code == 502
+    body = res.get_json()
+    assert body["retryable"] is True and "weird" not in res.get_data(as_text=True)
+
+
+def test_empty_ai_response_is_502(client, mock_ai):
+    mock_ai("   ")
+    res = post(client)
+    assert res.status_code == 502 and res.get_json()["code"] == "ai_invalid_response"
+
+
+def test_ai_tuple_with_usage(client, monkeypatch):
+    monkeypatch.setenv("AI_API_KEY", "k")
+    usage = {"prompt_tokens": 10, "output_tokens": 20, "total_tokens": 30}
+    monkeypatch.setattr(ai_service, "_call_model", lambda p: (json.dumps(get_demo_plan()), usage))
+    res = post(client)
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["mode"] == "live" and data["usage"]["total_tokens"] == 30
+
+
+def test_live_failure_never_falls_back_to_demo(client, monkeypatch):
+    monkeypatch.setenv("AI_API_KEY", "k")
+
+    def boom(prompt):
+        raise ai_service.AIServiceError("down")
+    monkeypatch.setattr(ai_service, "_call_model", boom)
+    body = post(client).get_json()
+    assert body["ok"] is False and "plan" not in body

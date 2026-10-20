@@ -105,6 +105,10 @@ def generate_plan(params):
 
     Raises AIConfigError, AIServiceError or AIResponseError.
     """
+    if not is_configured():
+        raise AIConfigError("AI_API_KEY is not set")
     result = _call_model(build_user_prompt(params))
     raw, usage = result if isinstance(result, tuple) else (result, None)
-    return parse_plan(raw), usage
+    if raw is None or (isinstance(raw, str) and not raw.strip()):
+        raise AIResponseError("AI returned an empty response")
+    return parse_plan(raw), token_usage.normalise_usage(usage) if usage else None

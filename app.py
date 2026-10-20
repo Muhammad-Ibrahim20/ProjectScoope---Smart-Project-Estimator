@@ -60,15 +60,21 @@ def estimate():
     except RequestValidationError as exc:
         return error("Please fix the highlighted fields.", 400, fields=exc.errors)
 
-    demo = bool(isinstance(data, dict) and data.get("demo"))
+    demo = isinstance(data, dict) and data.get("demo") is True
     if demo:
         if ai_service.is_configured():
             return error("Demo mode is only available when no AI key is configured.", 400)
         plan = parse_plan(get_demo_plan())
         return jsonify(build_response(plan, params, "demo"))
 
+    if not ai_service.is_configured():
+        return error(
+            "Live AI is not configured. Add AI_API_KEY in your environment, or try the labelled demo.",
+            503, code="ai_not_configured",
+        )
+
     try:
-        plan = ai_service.generate_plan(params)
+        plan, usage = ai_service.generate_plan(params)
     except ai_service.AIConfigError:
         return error(
             "Live AI is not configured. Add AI_API_KEY in your environment, or try the labelled demo.",
@@ -80,14 +86,17 @@ def estimate():
     except ai_service.AIServiceError:
         logger.exception("AI service failure")
         return error("The AI service is unavailable right now. Please try again.", 502, code="ai_failure", retryable=True)
-    except Exception:  # never leak stack traces
-        logger.exception("Unexpected error")
-        return error("Something went wrong. Please try again.", 500, retryable=True)
+    except Exception:  # never leak stack traces; any AI-side failure is retryable
+        logger.exception("Unexpected AI error")
+        return error("The AI request failed. Please try again.", 502, code="ai_failure", retryable=True)
 
     try:
-        return jsonify(build_response(plan, params, "live"))
+        body = build_response(plan, params, "live")
     except ValueError:
         return error("Could not calculate the estimate for these inputs.", 400)
+    if usage:
+        body["usage"] = usage
+    return jsonify(body)
 
 
 @app.post("/api/report.pdf")
