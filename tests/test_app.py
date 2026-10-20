@@ -306,3 +306,52 @@ def test_live_failure_never_falls_back_to_demo(client, monkeypatch):
     monkeypatch.setattr(ai_service, "_call_model", boom)
     body = post(client).get_json()
     assert body["ok"] is False and "plan" not in body
+
+
+# --- Health, AI mode default and badges (Phase 2) ----------------------------------------
+
+def test_health_reports_ai_and_pdf_status(client):
+    body = client.get("/api/health").get_json()
+    assert set(["status", "ai_configured", "pdf_available"]) <= set(body)
+    assert body["ai_configured"] is False and isinstance(body["pdf_available"], bool)
+    assert body["default_mode"] == "ai"
+
+
+def test_health_configured_never_leaks_key(client, monkeypatch):
+    monkeypatch.setenv("AI_API_KEY", "super-secret-health-key")
+    res = client.get("/api/health")
+    assert res.get_json()["ai_configured"] is True
+    assert "super-secret-health-key" not in res.get_data(as_text=True)
+
+
+def test_default_model(monkeypatch):
+    monkeypatch.delenv("AI_MODEL", raising=False)
+    assert ai_service.get_model() == "gemini-3-flash-preview"
+    monkeypatch.setenv("AI_MODEL", "gemini-custom")
+    assert ai_service.get_model() == "gemini-custom"
+
+
+def test_badge_key_needed_without_key(client):
+    html = client.get("/").get_data(as_text=True)
+    assert "AI mode: API key needed" in html
+    assert "Try sample" in html and "AI_API_KEY" in html
+
+
+def test_badge_ready_with_key(client, monkeypatch):
+    monkeypatch.setenv("AI_API_KEY", "secret-page-key")
+    html = client.get("/").get_data(as_text=True)
+    assert "Live AI ready" in html and "Try sample" not in html
+    assert "secret-page-key" not in html
+
+
+def test_503_includes_setup_steps(client):
+    body = post(client).get_json()
+    assert body["code"] == "ai_not_configured"
+    assert isinstance(body["setup"], list) and any("AI_API_KEY" in s for s in body["setup"])
+
+
+def test_demo_uses_form_values(client):
+    data = post(client, demo=True, hourly_rate=10, currency="USD", contingency_percent=0).get_json()
+    assert data["mode"] == "demo"
+    assert data["estimates"]["currency"] == "USD"
+    assert data["estimates"]["total_budget"] == data["estimates"]["total_hours"] * 10

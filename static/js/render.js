@@ -1,4 +1,4 @@
-/* Results dashboard rendering. All AI text is inserted with textContent, never innerHTML. */
+/* Results dashboard rendering. All AI text is inserted safely via textContent (no raw HTML). */
 (function () {
   "use strict";
 
@@ -170,7 +170,7 @@
     const plan = data.plan, est = data.estimates;
     container.replaceChildren();
     if (data.mode === "demo") {
-      container.appendChild(el("div", { cls: "notice notice-warn", text: "DEMO MODE: this is a fixed sample plan, not AI-generated output, and it does not reflect your idea. Your form values (team, rate, currency, contingency) are still applied to the Python calculations. Add AI_API_KEY to enable live AI plans." }));
+      container.appendChild(el("div", { cls: "notice notice-warn", text: "SAMPLE PLAN (demo, not AI): this is a fixed sample plan, not AI-generated output, and it does not reflect your idea. Your form values (team, rate, currency, contingency) are still applied to the Python calculations. Add AI_API_KEY to enable live AI plans." }));
     }
     const titleBlock = el("div", {}, [
       el("h1", { text: plan.user_title || plan.project_title }),

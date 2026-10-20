@@ -7,7 +7,7 @@ import os
 from services import token_usage
 from services.plan_schema import AIResponseError, parse_plan
 
-DEFAULT_MODEL = "gemini-2.5-flash"
+DEFAULT_MODEL = "gemini-3-flash-preview"
 
 
 class AIConfigError(Exception):
@@ -75,29 +75,40 @@ def _call_model(prompt):
     except ImportError as exc:  # pragma: no cover - depends on environment
         raise AIServiceError("google-genai package is not installed") from exc
 
-    try:
-        timeout_s = float(os.environ.get("AI_TIMEOUT_SECONDS") or 60)
-        client = genai.Client(
-            api_key=api_key,
-            http_options=types.HttpOptions(timeout=int(timeout_s * 1000)),
-        )
-        response = client.models.generate_content(
-            model=get_model(),
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-                response_mime_type="application/json",
-                temperature=0.4,
-                max_output_tokens=token_usage.max_output_tokens(SYSTEM_PROMPT + prompt),
-            ),
-        )
-        text = response.text
-        usage = token_usage.from_gemini(response)
-    except Exception as exc:  # provider errors vary; never leak details upward
-        raise AIServiceError("AI provider request failed") from exc
-    if not text:
-        raise AIResponseError("AI returned an empty response")
-    return text, usage
+    timeout_s = float(os.environ.get("AI_TIMEOUT_SECONDS") or 90)
+    client = genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(timeout=int(timeout_s * 1000)),
+    )
+
+    models_to_try = [get_model()]
+    for fb in ["gemini-3-flash-preview", "gemini-flash-latest"]:
+        if fb not in models_to_try:
+            models_to_try.append(fb)
+
+    last_exc = None
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_PROMPT,
+                    response_mime_type="application/json",
+                    temperature=0.4,
+                    max_output_tokens=token_usage.max_output_tokens(SYSTEM_PROMPT + prompt),
+                ),
+            )
+            text = response.text
+            if not text:
+                continue
+            usage = token_usage.from_gemini(response)
+            return text, usage
+        except Exception as exc:
+            last_exc = exc
+            continue
+
+    raise AIServiceError("AI provider request failed") from last_exc
 
 
 def generate_plan(params):

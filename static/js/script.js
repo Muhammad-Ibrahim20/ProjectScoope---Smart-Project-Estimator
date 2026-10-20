@@ -82,7 +82,7 @@
     submitBtn.disabled = on;
     if (demoBtn) demoBtn.disabled = on;
     spinner.classList.toggle("hidden", !on);
-    label.textContent = on ? (demo ? "Loading demo…" : "Generating plan…") : "Generate Project Plan";
+    label.textContent = on ? (demo ? "Loading sample…" : "Generating plan…") : "Generate Project Plan";
     loadingText.textContent = on && !demo ? "Analysing your idea. This usually takes 10–40 seconds." : "";
   }
 
@@ -113,7 +113,7 @@
       if (!res.ok || !body || !body.ok) {
         if (body && body.fields) Object.keys(body.fields).forEach(function (f) { setFieldError(f, body.fields[f]); });
         let msg = (body && body.error) || "The server returned an unexpected response (" + res.status + ").";
-        if (res.status === 503 && demoBtn) msg += " You can use the labelled demo button below.";
+        if (res.status === 503) setBadge(false);
         // 400 = fix input, 503 = configure AI (not retryable); 502/5xx = retryable.
         const retryable = res.status !== 503 && res.status !== 400 &&
           (!!(body && body.retryable) || res.status >= 500 || !body);
@@ -173,6 +173,18 @@
       btn.textContent = "Download PDF";
     }
   }
+
+  // Keep the header badge in sync with the server's AI configuration.
+  const badge = document.getElementById("ai-badge");
+  function setBadge(ready) {
+    if (!badge) return;
+    badge.textContent = ready ? "Live AI ready" : "AI mode: API key needed";
+    badge.classList.toggle("badge-ok", ready);
+    badge.classList.toggle("badge-warn", !ready);
+  }
+  fetch("/api/health").then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (h) { if (h && typeof h.ai_configured === "boolean") setBadge(h.ai_configured); })
+    .catch(function () { /* badge keeps its server-rendered state */ });
 
   form.addEventListener("submit", function (e) { e.preventDefault(); submit(false); });
   if (demoBtn) demoBtn.addEventListener("click", function () { submit(true); });
